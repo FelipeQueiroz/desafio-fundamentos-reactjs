@@ -82,6 +82,14 @@ export const TableContainer = styled.section`
       &.outcome {
         color: #e83f5b;
       }
+      button {
+        background: transparent;
+        box-shadow: 0;
+        border: none;
+      }
+      svg:first-child {
+        margin-right: 10px;
+      }
     }
 
     td:first-child {

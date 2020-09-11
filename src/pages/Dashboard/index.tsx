@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from 'react';
+import { FiDelete, FiEdit } from 'react-icons/fi';
+import { Link } from 'react-router-dom';
 
 import income from '../../assets/income.svg';
 import outcome from '../../assets/outcome.svg';
@@ -60,6 +62,26 @@ const Dashboard: React.FC = () => {
     loadTransactions();
   }, []);
 
+  async function handleDelete(id: string): Promise<void> {
+    await api.delete(`/transactions/${id}`).then(() => {
+      const newTransactions = transactions.filter(
+        transaction => transaction.id !== id,
+      );
+
+      setTransactions(newTransactions);
+    });
+
+    const response = await api.get('/transactions');
+
+    const balanceFormatted = {
+      income: formatValue(response.data.balance.income),
+      outcome: formatValue(response.data.balance.outcome),
+      total: formatValue(response.data.balance.total),
+    };
+
+    setBalance(balanceFormatted);
+  }
+
   return (
     <>
       <Header />
@@ -96,6 +118,7 @@ const Dashboard: React.FC = () => {
                 <th>Preço</th>
                 <th>Categoria</th>
                 <th>Data</th>
+                <th>Ações</th>
               </tr>
             </thead>
 
@@ -109,6 +132,17 @@ const Dashboard: React.FC = () => {
                   </td>
                   <td>{transaction.category.title}</td>
                   <td>{transaction.formattedDate}</td>
+                  <td>
+                    <Link to={`EditTransaction/${transaction.id}`}>
+                      <FiEdit size={20} color="#FF872C" />
+                    </Link>
+                    <button
+                      type="button"
+                      onClick={() => handleDelete(transaction.id)}
+                    >
+                      <FiDelete size={20} color="red" />
+                    </button>
+                  </td>
                 </tr>
               ))}
             </tbody>
